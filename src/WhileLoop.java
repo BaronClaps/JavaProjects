@@ -22,6 +22,7 @@ public class WhileLoop {
         while (name.isBlank()){
             System.out.print("What is your name? ");
             name = sc.nextLine();
+            
 
         }
         System.out.print("Hello, " + name);
