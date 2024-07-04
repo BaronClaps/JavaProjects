@@ -10,6 +10,7 @@ public class Calculator extends JFrame implements ActionListener {
             "7", "8", "9", "/", "4", "5", "6", "*", "1", "2", "3", "-", "0", ".", "+"};
     private double memoryValue = 0.0;
 
+
     public Calculator() {
         super("Calculator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
