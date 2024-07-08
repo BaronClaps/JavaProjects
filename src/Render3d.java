@@ -1,38 +1,46 @@
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.ArrayList;
-import java.awt.geom.*;
 import java.awt.image.BufferedImage;
-
-
+import static java.awt.Font.SERIF;
 public class Render3d {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setFont(Font.getFont(SERIF));
+        frame.setTitle("Rendering 3D");
         Container pane = frame.getContentPane();
         pane.setLayout(new BorderLayout());
 
         // slider to control horizontal rotation
-        JSlider headingSlider = new JSlider(0, 360, 180);
+        JSlider headingSlider = new JSlider(-180, 180, 0);
         pane.add(headingSlider, BorderLayout.SOUTH);
 
         // slider to control vertical rotation
         JSlider pitchSlider = new JSlider(SwingConstants.VERTICAL, -90, 90, 0);
         pane.add(pitchSlider, BorderLayout.EAST);
 
+        // slider to control roll
+        JSlider rollSlider = new JSlider(SwingConstants.VERTICAL, -90, 90, 0);
+        rollSlider.setBackground(Color.DARK_GRAY);
+        rollSlider.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        //rollSlider.setUI(new CustomSliderUI(rollSlider));
+        pane.add(rollSlider, BorderLayout.WEST);
+
         // panel to display render results
         JPanel renderPanel = new JPanel() {
-
             public void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setColor(Color.BLACK);
                 g2.fillRect(0, 0, getWidth(), getHeight());
 
-                // create a new path
-                ArrayList<Triangle> box = new ArrayList<>();
-                box.add(new Triangle(new Vertex(-100, 100, 100), new Vertex(100, -100, 100), new Vertex(100, 100, -100), Color.BLACK));
+                List<Triangle> box = new ArrayList<>();
+                box.add(new Triangle(new Vertex(100, 100, 100),
+                        new Vertex(-100, -100, 100),
+                        new Vertex(-100, 100, -100),
+                        Color.WHITE));
                 box.add(new Triangle(new Vertex(100, 100, 100),
                         new Vertex(-100, -100, 100),
                         new Vertex(100, -100, -100),
@@ -46,24 +54,9 @@ public class Render3d {
                         new Vertex(-100, -100, 100),
                         Color.BLUE));
 
-
-
-/*
-
-                //pitch control (through slider)
-                g2.translate(getWidth() / 2, getHeight() / 2);
-                g2.setColor(Color.WHITE);
-                for (Triangle t : box) {
-                    Vertex v1 = transform.transform(t.v1);
-                    Vertex v2 = transform.transform(t.v2);
-                    Vertex v3 = transform.transform(t.v3);
-                    Path2D path = new Path2D.Double();
-                    path.moveTo(v1.x, v1.y);
-                    path.lineTo(v2.x, v2.y);
-                    path.lineTo(v3.x, v3.y);
-                    path.closePath();
-                    g2.draw(path);
-                }*/
+                for (int i = 0; i < 4; i++) {
+                    box = inflate(box);
+                }
 
                 double heading = Math.toRadians(headingSlider.getValue());
                 Matrix3 headingTransform = new Matrix3(new double[] {
@@ -77,7 +70,13 @@ public class Render3d {
                         0, Math.cos(pitch), Math.sin(pitch),
                         0, -Math.sin(pitch), Math.cos(pitch)
                 });
-                Matrix3 transform = headingTransform.multiply(pitchTransform);
+                double roll = Math.toRadians(rollSlider.getValue());
+                Matrix3 rollTransform = new Matrix3(new double[] {
+                        Math.cos(roll), -Math.sin(roll), 0,
+                        Math.sin(roll), Math.cos(roll), 0,
+                        0, 0, 1
+                });
+                Matrix3 transform = headingTransform.multiply(pitchTransform).multiply(rollTransform);
 
                 BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 
@@ -119,8 +118,6 @@ public class Render3d {
 
                     double triangleArea = (v1.y - v3.y) * (v2.x - v3.x) + (v2.y - v3.y) * (v3.x - v1.x);
 
-
-                    //
                     for (int y = minY; y <= maxY; y++) {
                         for (int x = minX; x <= maxX; x++) {
                             double b1 = ((y - v3.y) * (v2.x - v3.x) + (v2.y - v3.y) * (v3.x - x)) / triangleArea;
@@ -140,18 +137,16 @@ public class Render3d {
                 }
 
                 g2.drawImage(img, 0, 0, null);
-
-
             }
         };
         pane.add(renderPanel, BorderLayout.CENTER);
-        pitchSlider.addChangeListener(e -> renderPanel.repaint());
+
         headingSlider.addChangeListener(e -> renderPanel.repaint());
+        pitchSlider.addChangeListener(e -> renderPanel.repaint());
+        rollSlider.addChangeListener(e -> renderPanel.repaint());
 
         frame.setSize(400, 400);
         frame.setVisible(true);
-
-
     }
 
     public static Color getShade(Color color, double shade) {
@@ -165,30 +160,53 @@ public class Render3d {
 
         return new Color(red, green, blue);
     }
-}
-    class Vertex {
-        double x;
-        double y;
-        double z;
-        Vertex(double x, double y, double z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-    }
 
-    class Triangle {
-        Vertex v1;
-        Vertex v2;
-        Vertex v3;
-        Color color;
-        Triangle(Vertex v1, Vertex v2, Vertex v3, Color color) {
-            this.v1 = v1;
-            this.v2 = v2;
-            this.v3 = v3;
-            this.color = color;
+    public static List<Triangle> inflate(List<Triangle> box) {
+        List<Triangle> result = new ArrayList<>();
+        for (Triangle t : box) {
+            Vertex m1 = new Vertex((t.v1.x + t.v2.x)/2, (t.v1.y + t.v2.y)/2, (t.v1.z + t.v2.z)/2);
+            Vertex m2 = new Vertex((t.v2.x + t.v3.x)/2, (t.v2.y + t.v3.y)/2, (t.v2.z + t.v3.z)/2);
+            Vertex m3 = new Vertex((t.v1.x + t.v3.x)/2, (t.v1.y + t.v3.y)/2, (t.v1.z + t.v3.z)/2);
+            result.add(new Triangle(t.v1, m1, m3, t.color));
+            result.add(new Triangle(t.v2, m1, m2, t.color));
+            result.add(new Triangle(t.v3, m2, m3, t.color));
+            result.add(new Triangle(m1, m2, m3, t.color));
         }
+        for (Triangle t : result) {
+            for (Vertex v : new Vertex[] { t.v1, t.v2, t.v3 }) {
+                double l = Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z) / Math.sqrt(30000);
+                v.x /= l;
+                v.y /= l;
+                v.z /= l;
+            }
+        }
+        return result;
     }
+}
+
+class Vertex {
+    double x;
+    double y;
+    double z;
+    Vertex(double x, double y, double z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+}
+
+class Triangle {
+    Vertex v1;
+    Vertex v2;
+    Vertex v3;
+    Color color;
+    Triangle(Vertex v1, Vertex v2, Vertex v3, Color color) {
+        this.v1 = v1;
+        this.v2 = v2;
+        this.v3 = v3;
+        this.color = color;
+    }
+}
 
 class Matrix3 {
     double[] values;
@@ -215,5 +233,4 @@ class Matrix3 {
         );
     }
 }
-
 
