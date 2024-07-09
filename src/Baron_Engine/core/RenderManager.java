@@ -1,7 +1,8 @@
 package Baron_Engine.core;
 
+import Baron_Engine.core.entity.Model;
 import Baron_Engine.test.Launcher;
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 
 public class RenderManager {
 
@@ -14,12 +15,17 @@ public class RenderManager {
     public void init() throws Exception {
     }
 
-    public void render(){
-
+    public void render(Model model) {
+        clear();
+        GL30.glBindVertexArray(model.getId());
+        GL30.glEnableVertexAttribArray(0);
+        GL30.glDrawArrays(GL30.GL_TRIANGLES, 0, model.getVertexCount());
+        GL30.glDisableVertexAttribArray(0);
+        GL30.glBindVertexArray(0);
     }
 
     public void clear(){
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        GL30.glClear(GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
     }
 
     public void cleanup() {
