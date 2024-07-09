@@ -1,3 +1,5 @@
+package Basics;
+
 public class IfState {
  public static void main(String[] args) {
     int a = 10;

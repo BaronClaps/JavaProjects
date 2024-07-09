@@ -1,3 +1,5 @@
+package Basics;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -12,7 +14,7 @@ public class Calculator extends JFrame implements ActionListener {
 
 
     public Calculator() {
-        super("Calculator");
+        super("Basics.Calculator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(300, 400));
         setResizable(false);

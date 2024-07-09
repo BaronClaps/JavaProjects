@@ -1,3 +1,5 @@
+package Basics;
+
 public class ExpressionsAndMath {
     public static void main(String[] args) {
         int friends = 10;

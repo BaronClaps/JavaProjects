@@ -1,3 +1,5 @@
+package Basics;
+
 public class twoDArrays {
     public static void main(String[] args) {
     int[][] myArray = new int[3][3];

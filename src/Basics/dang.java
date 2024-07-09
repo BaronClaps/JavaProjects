@@ -1,3 +1,5 @@
+package Basics;
+
 import java.util.Random;
 
 public class dang {
@@ -10,9 +12,9 @@ public class dang {
                     /*for(int l = 0;l<=25;l++) {
                         //for(int m = 0;m<=25;m++){
                             //for(int n = 0;n<=25;n++){
-                                int x = random.nextInt(8) + 1;
-                                int y = random.nextInt(8) + 1;
-                                int z = random.nextInt(8) + 1;
+                                int x = Basics.random.nextInt(8) + 1;
+                                int y = Basics.random.nextInt(8) + 1;
+                                int z = Basics.random.nextInt(8) + 1;
                                 System.out.println(alphabet[i] + alphabet[j] + alphabet[k] + alphabet[l] + alphabet[m] + alphabet[n] + x + y + z);
                             }
                         }

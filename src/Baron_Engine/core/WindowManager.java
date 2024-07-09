@@ -133,12 +133,12 @@ public class WindowManager {
         this.resize = resize;
     }
 
-    public void getWidth(int width) {
-        this.width = width;
+    public int getWidth() {
+        return width;
     }
 
-    public void getHeight(int height) {
-        this.height = height;
+    public int getHeight() {
+        return height;
     }
 
     public long getWindow() {

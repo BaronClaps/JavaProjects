@@ -1,3 +1,5 @@
+package Render3d;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -54,7 +56,9 @@ public class Render3d {
                         new Vertex(-100, -100, 100),
                         Color.BLUE));
 
-                for (int i = 0; i < 4; i++) {
+
+                /** Controls Subdivision **/
+                for (int i = 0; i < 9; i++) { //default is 4 (16 triangles)
                     box = inflate(box);
                 }
 

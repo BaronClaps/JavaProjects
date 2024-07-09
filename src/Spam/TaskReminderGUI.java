@@ -1,3 +1,5 @@
+package Spam;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,7 +21,7 @@ public class TaskReminderGUI extends JFrame {
 
     public TaskReminderGUI() {
         setTitle("Task Reminder");
-        setSize(400, 300);
+        setSize(400, 140);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Center the frame on the screen
         getContentPane().setBackground(new Color(30, 144, 255)); // Sea colored background
@@ -126,6 +128,7 @@ public class TaskReminderGUI extends JFrame {
             public void run() {
                 TaskReminderGUI gui = new TaskReminderGUI();
                 gui.setVisible(true);
+                gui.setResizable(true);
             }
         });
     }
