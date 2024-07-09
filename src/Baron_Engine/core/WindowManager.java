@@ -1,4 +1,4 @@
-package Game_Engine_3d;
+package Baron_Engine.core;
 
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
